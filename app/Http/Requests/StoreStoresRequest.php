@@ -6,7 +6,7 @@ use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class LoginRequst extends FormRequest
+class StoreStoresRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -15,7 +15,7 @@ class LoginRequst extends FormRequest
      */
     public function authorize()
     {
-        return true;
+        return auth()->user()->isSeller();
     }
 
     /**
@@ -26,15 +26,16 @@ class LoginRequst extends FormRequest
     public function rules()
     {
         return [
-            'email' => 'required|string|email|max:100|exist:users,email',
-            'password' => 'required|string|confirmed|min:6',
+            'name' => 'required|max:100',
+            'description' => 'required|max:200',
         ];
     }
 
     public function failedValidation(Validator $validator)
     {
         throw new HttpResponseException(response()->json([
-            $validator->errors()
-        ], 400));
+            'status' => 0,
+            'errors' => $validator->errors()
+        ], 422));
     }
 }
