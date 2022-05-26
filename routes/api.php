@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\StoresController;
+use App\Http\Controllers\StoreController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -20,7 +20,6 @@ use Illuminate\Support\Facades\Route;
 //    return $request->user();
 //});
 
-Route::middleware('api')->group(function () {
 //    JWT Authentication
     Route::prefix('auth')
         ->controller(AuthController::class)
@@ -31,7 +30,6 @@ Route::middleware('api')->group(function () {
             Route::post('refresh', 'refresh')->name('refresh');
             Route::post('profile', 'profile')->name('profile');
         });
-//Stores
 
-    Route::resource('stores', StoresController::class)->middleware('auth');
-});
+//    Store
+    Route::apiResource('stores', StoreController::class)->middleware('auth');

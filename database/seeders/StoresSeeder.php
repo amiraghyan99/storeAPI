@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\Stores;
+use App\Models\Store;
 use Illuminate\Database\Seeder;
 
 class StoresSeeder extends Seeder
@@ -14,6 +14,6 @@ class StoresSeeder extends Seeder
      */
     public function run()
     {
-        Stores::factory(random_int(5,10))->create();
+        Store::factory(random_int(5,10))->create();
     }
 }

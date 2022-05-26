@@ -2,11 +2,11 @@
 
 namespace App\Policies;
 
-use App\Models\Stores;
+use App\Models\Store;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class StoresPolicy
+class StorePolicy
 {
     use HandlesAuthorization;
 
@@ -18,19 +18,19 @@ class StoresPolicy
      */
     public function viewAny(User $user)
     {
-        //
+        return $this->allow();
     }
 
     /**
      * Determine whether the user can view the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Stores  $stores
+     * @param  \App\Models\Store  $store
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function view(User $user, Stores $stores)
+    public function view(User $user, Store $store)
     {
-        //
+        return $this->allow();
     }
 
     /**
@@ -41,41 +41,41 @@ class StoresPolicy
      */
     public function create(User $user)
     {
-        //
+        return $user->isSeller();
     }
 
     /**
      * Determine whether the user can update the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Stores  $stores
+     * @param  \App\Models\Store  $store
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function update(User $user, Stores $stores)
+    public function update(User $user, Store $store)
     {
-        //
+        return $user->isSeller() && $user->id == $store->user_id;
     }
 
     /**
      * Determine whether the user can delete the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Stores  $stores
+     * @param  \App\Models\Store  $store
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function delete(User $user, Stores $stores)
+    public function delete(User $user, Store $store)
     {
-        //
+        return $user->isSeller() && $user->id == $store->user_id;
     }
 
     /**
      * Determine whether the user can restore the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Stores  $stores
+     * @param  \App\Models\Store  $store
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function restore(User $user, Stores $stores)
+    public function restore(User $user, Store $store)
     {
         //
     }
@@ -84,10 +84,10 @@ class StoresPolicy
      * Determine whether the user can permanently delete the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Stores  $stores
+     * @param  \App\Models\Store  $store
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function forceDelete(User $user, Stores $stores)
+    public function forceDelete(User $user, Store $store)
     {
         //
     }
