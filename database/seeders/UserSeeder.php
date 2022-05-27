@@ -2,9 +2,9 @@
 
 namespace Database\Seeders;
 
+use App\Models\Product;
 use App\Models\Store;
 use App\Models\User;
-use Database\Factories\StoresFactory;
 use Illuminate\Database\Seeder;
 
 class UserSeeder extends Seeder
@@ -16,6 +16,6 @@ class UserSeeder extends Seeder
      */
     public function run()
     {
-        User::factory(50)->has(Store::factory(random_int(5,10)))->create();
+        User::factory(10)->create();
     }
 }

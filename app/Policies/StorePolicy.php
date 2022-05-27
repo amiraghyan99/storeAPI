@@ -53,7 +53,7 @@ class StorePolicy
      */
     public function update(User $user, Store $store)
     {
-        return $user->isSeller() && $user->id == $store->user_id;
+        return $user->isSeller();
     }
 
     /**
@@ -65,7 +65,7 @@ class StorePolicy
      */
     public function delete(User $user, Store $store)
     {
-        return $user->isSeller() && $user->id == $store->user_id;
+        return $user->isSeller();
     }
 
     /**

@@ -2,12 +2,27 @@
 
 namespace App\Models;
 
+use App\Traits\HasSearch;
+use App\Traits\HasDiffForHumans;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @method static search(array $only)
+ */
 class Store extends Model
 {
-    use HasFactory;
+    use HasFactory, HasSearch, HasDiffForHumans;
+
+    /**
+     * @var array|string[]
+     */
+    protected array $searchable_fields = ['name', 'description'];
+
+    /**
+     * @var string
+     */
+    protected string $searchable_key = 'search';
 
     /**
      * The attributes that are mass assignable.
@@ -18,33 +33,15 @@ class Store extends Model
         'name',
         'description',
     ];
-    protected $table = 'stores';
 
-    public function user(){
+    public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
         return $this->belongsTo(User::class);
     }
 
-//    public function products(){
-//        return $this->hasMany(...);
-//    }
-
-    public function getCreatedAtAttribute($value)
+    public function products(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
-        return now()->parse($value)->diffForHumans();
+        return $this->hasMany(Product::class);
     }
 
-    public function getUpdatedAtAttribute($value)
-    {
-        return now()->parse($value)->diffForHumans();
-    }
-
-    public function scopeFilter($query, array $filters)
-    {
-        $query->when($filters['search'] ?? null, function ($query, $search) {
-            $query->where(function ($query) use ($search) {
-                $query->where('name', 'like', '%' . $search . '%')
-                    ->orWhere('description', 'like', '%' . $search . '%');
-            });
-        });
-    }
 }

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\ProductResource;
+use App\Models\Product;
 use App\Models\Store;
 use Illuminate\Http\Request;
 
@@ -10,11 +12,12 @@ class ProductController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
      */
-    public function index()
+    public function index(Store $store): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
     {
-        //
+        $products = $store->products()->paginate();
+        return ProductResource::collection($products);
     }
 
     /**

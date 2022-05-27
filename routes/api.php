@@ -1,8 +1,8 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\StoreController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -32,4 +32,7 @@ use Illuminate\Support\Facades\Route;
         });
 
 //    Store
-    Route::apiResource('stores', StoreController::class)->middleware('auth');
+    Route::apiResource('stores', StoreController::class);
+
+//        ->middleware('auth');
+    Route::apiResource('stores.products', ProductController::class);

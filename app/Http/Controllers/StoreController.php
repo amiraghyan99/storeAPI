@@ -2,53 +2,55 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\StoreResource;
 use App\Models\Store;
 use App\Http\Requests\StoreStoresRequest;
 use App\Http\Requests\UpdateStoresRequest;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class StoreController extends Controller
 {
-//    for filter
-    const QUERIES = ['search'];
+
+    public static string $searchable_key = '';
 
     public function __construct()
     {
+        self::$searchable_key = Store::getSearchableKey();
         $this->authorizeResource(Store::class, 'store');
     }
 
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return AnonymousResourceCollection
      */
-    public function index()
+    public function index(): AnonymousResourceCollection
     {
-        $stores = Store::filter(request()->only(static::QUERIES))->paginate()->withQueryString();
-
-        return response()->json(compact('stores'));
+        $stores = Store::search(request()->only(self::$searchable_key ))->paginate()->withQueryString();
+        return StoreResource::collection($stores);
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @param StoreStoresRequest $request
+     * @return StoreResource
      */
-    public function store(StoreStoresRequest $request)
+    public function store(StoreStoresRequest $request): StoreResource
     {
-        $stores = auth()->user()->stores()->create($request->validated());
-
-        return response()->json(['stores' => $stores]);
+        $store = auth()->user()->stores()->create($request->validated());
+        return new StoreResource($store);
     }
 
     /**
      * Display the specified resource.
      *
-     * @param \App\Models\Store $stores
-     * @return \Illuminate\Http\JsonResponse
+     * @param Store $store
+     * @return StoreResource
      */
-    public function show(Store $store)
+    public function show(Store $store): StoreResource
     {
-        return response()->json(compact('store'));
+        return new StoreResource($store);
     }
 
     /**
@@ -56,23 +58,28 @@ class StoreController extends Controller
      *
      * @param \App\Http\Requests\UpdateStoresRequest $request
      * @param \App\Models\Store $stores
-     * @return \Illuminate\Http\JsonResponse
+     * @return StoreResource
      */
-    public function update(UpdateStoresRequest $request, Store $store)
+    public function update(UpdateStoresRequest $request, Store $store): StoreResource
     {
         $store->update($request->validated());
-        return response()->json([compact('store')]);
+        return (new StoreResource($store))->additional($this->withMessage("The Store $store->name updated successfully"));
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param \App\Models\Store $stores
-     * @return \Illuminate\Http\JsonResponse
+     * @param Store $store
+     * @return StoreResource
      */
-    public function destroy(Store $store)
+    public function destroy(Store $store): StoreResource
     {
         $store->delete();
-        return response()->json(['message' => 'The Store ' . $store->name . ' deleted.']);
+        return new StoreResource($store);
+    }
+
+    public function withMessage(string $message, bool $status = true): array
+    {
+        return ['message' => $message, 'status' => (int)$status];
     }
 }
