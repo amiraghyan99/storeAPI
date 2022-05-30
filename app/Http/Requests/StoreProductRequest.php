@@ -4,11 +4,8 @@ namespace App\Http\Requests;
 
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Http\Exceptions\HttpResponseException;
-use Illuminate\Http\Response;
-use Symfony\Component\HttpFoundation\Response as ResponseStatus;
 
-class UpdateStoresRequest extends FormRequest
+class StoreProductRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -17,7 +14,7 @@ class UpdateStoresRequest extends FormRequest
      */
     public function authorize()
     {
-        return auth()->user()->isSeller();
+        return true;
     }
 
     /**
@@ -30,14 +27,9 @@ class UpdateStoresRequest extends FormRequest
         return [
             'name' => 'required|max:100',
             'description' => 'required|max:200',
+            'category_ids' => 'array|required|min:1',
+            'category_ids.*' => 'required|exists:categories,id',
         ];
     }
 
-    public function failedValidation(Validator $validator)
-    {
-        throw new HttpResponseException(response()->json([
-            'errors' => $validator->errors(),
-            'status' => 0
-        ], ResponseStatus::HTTP_UNPROCESSABLE_ENTITY));
-    }
 }

@@ -3,19 +3,18 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Str;
 
-class ProductFactory extends Factory
+class CategoryFactory extends Factory
 {
     /**
      * Define the model's default state.
      *
      * @return array
      */
-    public function definition(): array
+    public function definition()
     {
         return [
-            'name' => $this->faker->streetName(),
+            'name' => strtoupper($this->faker->text),
             'description' => $this->faker->text,
 //            'count' => random_int(0,10)
         ];

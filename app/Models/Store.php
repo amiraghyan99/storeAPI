@@ -6,6 +6,7 @@ use App\Traits\HasSearch;
 use App\Traits\HasDiffForHumans;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @method static search(array $only)
@@ -17,7 +18,7 @@ class Store extends Model
     /**
      * @var array|string[]
      */
-    protected array $searchable_fields = ['name', 'description'];
+    protected array $searchable_fields = ['name'];
 
     /**
      * @var string
@@ -39,7 +40,10 @@ class Store extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function products(): \Illuminate\Database\Eloquent\Relations\HasMany
+    /**
+     * @return HasMany
+     */
+    public function products(): HasMany
     {
         return $this->hasMany(Product::class);
     }

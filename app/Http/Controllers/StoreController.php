@@ -56,8 +56,8 @@ class StoreController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param \App\Http\Requests\UpdateStoresRequest $request
-     * @param \App\Models\Store $stores
+     * @param UpdateStoresRequest $request
+     * @param Store $store
      * @return StoreResource
      */
     public function update(UpdateStoresRequest $request, Store $store): StoreResource

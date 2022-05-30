@@ -2,87 +2,84 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreProductRequest;
+use App\Http\Requests\UpdateProductRequest;
 use App\Http\Resources\ProductResource;
 use App\Models\Product;
 use App\Models\Store;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Http\Response;
 
 class ProductController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+     * @param Store $store
+     * @return AnonymousResourceCollection
      */
-    public function index(Store $store): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+    public function index(Store $store): AnonymousResourceCollection
     {
-        $products = $store->products()->paginate();
+        $products = $store->products()->with(['categories'])->paginate();
         return ProductResource::collection($products);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param StoreProductRequest $request
+     * @param Store $store
+     * @return ProductResource
      */
-    public function store(Request $request)
+    public function store(StoreProductRequest $request, Store $store): ProductResource
     {
-        //
+
+        $product = $store->products()->create($request->except('category_ids'));
+
+        $product->categories()->attach($request->category_ids);
+
+        return new ProductResource($product->load('categories'));
+
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Store  $stores
-     * @return \Illuminate\Http\Response
+     * @param Store $store
+     * @param Product $product
+     * @return ProductResource
      */
-    public function show(Store $stores)
+    public function show(Store $store ,Product $product)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Store  $stores
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Store $stores)
-    {
-        //
+        return new ProductResource($product->load('categories'));
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Store  $stores
-     * @return \Illuminate\Http\Response
+     * @param UpdateProductRequest $request
+     * @param Store $stores
+     * @param Product $product
+     * @return ProductResource
      */
-    public function update(Request $request, Store $stores)
+    public function update(UpdateProductRequest $request, Store $store, Product $product)
     {
-        //
+        $product->update($request->validated());
+        $product->categories()->sync($request->category_ids);
+
+        return new ProductResource($product->load(['categories']));
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Store  $stores
-     * @return \Illuminate\Http\Response
+     * @param Store $stores
+     * @return Response
      */
-    public function destroy(Store $stores)
+    public function destroy(Store $store, Product $product)
     {
-        //
+        $product->delete();
     }
 }
