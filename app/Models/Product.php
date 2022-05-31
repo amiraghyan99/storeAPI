@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class Product extends Model
 {
@@ -34,28 +34,37 @@ class Product extends Model
 
     /**
      * Product Colors
-     * @return HasMany
+     * @return BelongsToMany
      */
-    public function colors(): HasMany
+    public function colors(): BelongsToMany
     {
-        return $this->hasMany(Color::class);
+        return $this->belongsToMany(Color::class);
     }
 
     /**
      * Product Sizes
-     * @return HasMany
+     * @return BelongsToMany
      */
-    public function sizes(): HasMany
+    public function sizes(): BelongsToMany
     {
-        return $this->hasMany(Size::class);
+        return $this->belongsToMany(Size::class);
     }
 
     /**
      * Product Materials
-     * @return HasMany
+     * @return BelongsToMany
      */
-    public function materials(): HasMany
+    public function materials(): BelongsToMany
     {
-        return $this->hasMany(Material::class);
+        return $this->belongsToMany(Material::class);
+    }
+
+    /**
+     * Product Images (Polymorphic Table 'Images')
+     * @return MorphMany
+     */
+    public function images(): MorphMany
+    {
+        return $this->morphMany(Images::class, 'imageable');
     }
 }
