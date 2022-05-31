@@ -13,6 +13,7 @@ use Illuminate\Http\Response;
 
 class ProductController extends Controller
 {
+
     /**
      * Display a listing of the resource.
      *
@@ -21,8 +22,8 @@ class ProductController extends Controller
      */
     public function index(Store $store): AnonymousResourceCollection
     {
-        $products = $store->products()->with(['categories'])->paginate();
-        return ProductResource::collection($products);
+        $products = $store->products()->with(['categories','colors'])->paginate();
+        return ProductResource::collection($products)->additional(compact('store'));
     }
 
 
@@ -60,7 +61,6 @@ class ProductController extends Controller
      * Update the specified resource in storage.
      *
      * @param UpdateProductRequest $request
-     * @param Store $stores
      * @param Product $product
      * @return ProductResource
      */

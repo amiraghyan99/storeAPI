@@ -54,7 +54,11 @@ class AuthController extends Controller
 
     public function profile()
     {
-        return response()->json(auth()->user());
+        $user = auth()->user();
+        if ($user->isSeller()) {
+            $user = $user->load('stores');
+        }
+        return response()->json($user);
     }
 
     protected function respondWithToken($token): \Illuminate\Http\JsonResponse
@@ -63,7 +67,7 @@ class AuthController extends Controller
             'status' => 1,
             'access_token' => $token,
             'token_type' => 'bearer',
-            'expires_in' => auth()->factory()->getTTL() * 60
+            'expires_in' => auth()->factory()->getTTL() * 60 * 60
         ]);
     }
 }

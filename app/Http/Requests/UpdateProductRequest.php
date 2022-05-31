@@ -26,6 +26,7 @@ class UpdateProductRequest extends FormRequest
         return [
             'name' => 'required|max:100',
             'description' => 'required|max:200',
+            'count' => 'required|numeric|min:0',
             'category_ids' => 'array|required|min:1',
             'category_ids.*' => 'required|exists:categories,id',
         ];

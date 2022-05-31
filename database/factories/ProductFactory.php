@@ -17,7 +17,7 @@ class ProductFactory extends Factory
         return [
             'name' => $this->faker->streetName(),
             'description' => $this->faker->text,
-//            'count' => random_int(0,10)
+            'count' => random_int(0,10)
         ];
     }
 }
