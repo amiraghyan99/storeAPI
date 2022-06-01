@@ -3,3 +3,4 @@
 3) composer install
 4) php artisan migrate --seed
 5) php artisan key:generate
+6) import Postman Collaction from "StoreAPI.postman_collection.json"
