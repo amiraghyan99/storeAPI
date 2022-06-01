@@ -7,7 +7,6 @@ use App\Http\Requests\UpdateProductRequest;
 use App\Models\Product;
 use App\Models\Store;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Str;
 
 class ProductService
 {
@@ -22,24 +21,26 @@ class ProductService
 
         try {
             $product = $store->products()->create($request->except('category_ids'));
+            //Attach Categories
             $product->categories()->attach($request->category_ids);
+            //Attach Colors
             $product->colors()->attach([1, 2]);
+            //Attach Sizes
+            $product->sizes()->attach([2, 4]);
+            //Attach Materials
+            $product->materials()->attach([1]);
 
-            $imageUpload = new ImageUploadService($product);
+            $imageService = new ImageService($product);
+            //Upload and Store Images
+            $imageService->storeMany($request->file('images'));
 
+            $product->load_items();
 
-            $imageUpload->storeMany($request->file('images'), $product);
+            return $product;
 
-
-
-
-            $product->load(['categories', 'images']);
         } catch (\Exception $exception) {
             dd($exception);
         }
-
-        return $product;
-
     }
 
     /**
@@ -49,8 +50,15 @@ class ProductService
      */
     public function update(Product $product, UpdateProductRequest $request): Product
     {
-        $product->update($request->validated());
-        $product->categories()->sync($request->category_ids);
+        try {
+            $product->update($request->validated());
+            $product->categories()->sync($request->category_ids);
+
+            $imageService = new ImageService($product);
+            $imageService->update($request->file('images'));
+        } catch (\Exception $exception) {
+            dd($exception);
+        }
 
         return $product->load(['categories']);
     }
@@ -58,12 +66,15 @@ class ProductService
     /**
      * @param Product $product
      * @return Product
+     * @throws \Exception
      */
     public function delete(Product $product): Product
     {
         try {
+            $imageService = new ImageService($product);
+            $imageService->deleteAll();
+
             $product->delete();
-            $product->images()->delete();
         } catch (\Exception $exception) {
             dd($exception);
         }

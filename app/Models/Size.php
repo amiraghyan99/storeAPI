@@ -10,8 +10,6 @@ class Size extends Model
 {
     use HasFactory;
 
-
-
     /**
      * Size Products
      * @return BelongsToMany

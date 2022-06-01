@@ -15,8 +15,8 @@ class CreateMaterialProductTable extends Migration
     {
         Schema::create('material_product', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('product_id')->constrained();
-            $table->foreignId('material_id')->constrained();
+            $table->foreignId('product_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('material_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
         });
     }

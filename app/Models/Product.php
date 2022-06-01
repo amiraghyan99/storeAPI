@@ -2,17 +2,40 @@
 
 namespace App\Models;
 
+use App\Traits\HasFilters;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
+/**
+ * @method static search(array $only)
+ */
 class Product extends Model
 {
-    use HasFactory;
+    use HasFactory, HasFilters;
 
     protected $fillable = ['name', 'description', 'count'];
+    /**
+     * @var array|string[]
+     */
+    protected array $searchable_fields = ['name'];
+
+    /**
+     * @var string
+     */
+    protected string $searchable_key = 'search';
+    protected array $ordered_fields = ['name'];
+
+
+    /**
+     * @return Product
+     */
+    public function load_items(): Product
+    {
+        return $this->load('store', 'categories', 'colors', 'sizes', 'materials');
+    }
 
     /**
      * Product Store
@@ -24,7 +47,7 @@ class Product extends Model
     }
 
     /**
-     * Product Categories
+     * Product <=> Categories
      * @return BelongsToMany
      */
     public function categories(): BelongsToMany

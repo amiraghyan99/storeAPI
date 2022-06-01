@@ -15,12 +15,9 @@ class MaterialSeeder extends Seeder
     public function run()
     {
         $materials = [
-            ['material' => 'XS'],
-            ['material' => 'S'],
-            ['material' => 'M'],
-            ['material' => 'L'],
-            ['material' => 'XL'],
-            ['material' => 'XXL']
+            ['name' => 'synthetic'],
+            ['name' => 'cotton'],
+            ['name' => 'polyethylene'],
         ];
 
         Material::insert($materials);

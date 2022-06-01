@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -23,6 +24,8 @@ class AuthController extends Controller
             $request->validated(),
             ['password' => bcrypt($request->password)]
         ));
+
+        //
 
         return response()->json([
             'status' => 1,
@@ -52,16 +55,20 @@ class AuthController extends Controller
         return $this->respondWithToken(auth()->refresh());
     }
 
-    public function profile()
+    /**
+     * @return JsonResponse
+     */
+    public function profile(): JsonResponse
     {
         $user = auth()->user();
         if ($user->isSeller()) {
             $user = $user->load('stores');
         }
+
         return response()->json($user);
     }
 
-    protected function respondWithToken($token): \Illuminate\Http\JsonResponse
+    protected function respondWithToken($token): JsonResponse
     {
         return response()->json([
             'status' => 1,

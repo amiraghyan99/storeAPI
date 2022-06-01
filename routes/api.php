@@ -36,3 +36,5 @@ use Illuminate\Support\Facades\Route;
 
 //        ->middleware('auth');
     Route::apiResource('stores.products', ProductController::class);
+
+//    Route::apiResource('stores.products', ProductController::class);

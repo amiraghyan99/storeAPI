@@ -27,6 +27,7 @@ class StoreController extends Controller
     public function index(): AnonymousResourceCollection
     {
         $stores = Store::search(request()->only(self::$searchable_key ))->paginate()->withQueryString();
+
         return StoreResource::collection($stores);
     }
 

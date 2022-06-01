@@ -7,7 +7,7 @@ use App\Http\Requests\UpdateProductRequest;
 use App\Http\Resources\ProductResource;
 use App\Models\Product;
 use App\Models\Store;
-use App\Services\ImageUploadService;
+use App\Services\ImageService;
 use App\Services\ProductService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -16,10 +16,20 @@ use Illuminate\Http\Response;
 class ProductController extends Controller
 {
 
-    protected $productService;
+
+    /**
+     * @var array|string[]
+     */
+    public static array $filterKeys = ['search', 'sortBy'];
+
+    /**
+     * @var ProductService
+     */
+    protected ProductService $productService;
 
     public function __construct()
     {
+        $this->authorizeResource(Product::class);
         $this->productService = new ProductService();
     }
 
@@ -31,7 +41,8 @@ class ProductController extends Controller
      */
     public function index(Store $store): AnonymousResourceCollection
     {
-        $products = $store->products()->with(['categories', 'colors'])->paginate();
+        $products = Product::search(request()->only(self::$filterKeys ))->paginate()->withQueryString();
+
         return ProductResource::collection($products)->additional(compact('store'));
     }
 
@@ -57,7 +68,7 @@ class ProductController extends Controller
      * @param Product $product
      * @return ProductResource
      */
-    public function show(Store $store, Product $product)
+    public function show(Store $store, Product $product): ProductResource
     {
         return new ProductResource($product->load('categories'));
     }
@@ -70,7 +81,7 @@ class ProductController extends Controller
      * @param Product $product
      * @return ProductResource
      */
-    public function update(UpdateProductRequest $request, Store $store, Product $product)
+    public function update(UpdateProductRequest $request, Store $store, Product $product): ProductResource
     {
         $product = $this->productService->update($product, $request);
 
@@ -82,11 +93,11 @@ class ProductController extends Controller
      *
      * @param Store $store
      * @param Product $product
-     * @return Response
+     * @return ProductResource
      */
-    public function destroy(Store $store, Product $product)
+    public function destroy(Store $store, Product $product): ProductResource
     {
         $product = $this->productService->delete($product);
-        return $product;
+        return new ProductResource($product);
     }
 }
